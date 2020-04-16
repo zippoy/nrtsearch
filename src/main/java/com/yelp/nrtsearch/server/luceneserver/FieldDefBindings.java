@@ -51,7 +51,7 @@ public final class FieldDefBindings extends Bindings {
         }
         if (fd.valueType == FieldDef.FieldValueType.VIRTUAL) {
             return fd.valueSource;
-        } else if (fd.fieldType != null && fd.fieldType.docValuesType() == DocValuesType.NUMERIC) {
+        } else if (fd.fieldType != null && (fd.fieldType.docValuesType() == DocValuesType.NUMERIC  || fd.fieldType.docValuesType() == DocValuesType.SORTED_NUMERIC)) {
             if (fd.valueType == FieldDef.FieldValueType.INT) {
                 return DoubleValuesSource.fromIntField(name);
             } else if (fd.valueType == FieldDef.FieldValueType.FLOAT) {

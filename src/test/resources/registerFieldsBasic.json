@@ -46,6 +46,7 @@
       "type": "INT",
       "search": true,
       "storeDocValues": true,
+      "multiValued": true,
       "sort": true
     },
     {
