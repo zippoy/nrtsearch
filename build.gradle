@@ -3,6 +3,9 @@ plugins {
     id 'application'
     // Generate IntelliJ IDEA's .idea & .iml project files
     id 'idea'
+    id 'maven-publish'
+    id 'signing'
+    id "com.diffplug.gradle.spotless" version "4.3.0"
 }
 
 repositories {
@@ -10,10 +13,18 @@ repositories {
         url "https://maven-central.storage-download.googleapis.com/repos/central/data/"
     }
     mavenLocal()
+    mavenCentral()
 }
 
 sourceCompatibility = 1.14
 targetCompatibility = 1.14
+
+allprojects {
+    version = '0.1.7'
+    group = 'com.yelp.nrtsearch'
+}
+
+def _artifactId = 'server'
 
 //This is for https://github.com/gradle/gradle/issues/11308
 System.setProperty("org.gradle.internal.publish.checksums.insecure", "True")
@@ -33,13 +44,11 @@ def commonsCompressVersion = '1.19'
 def awsJavaSdkVersion = '1.11.695'
 def guicedeeVersion = '1.0.1.7-jre13'
 def lz4Version = '1.7.0'
-def prometheusVersion = '0.3.0'
 def prometheusClientVersion = '0.8.0'
 
 dependencies {
 
     //prometheus (metrics) deps
-    implementation "me.dinowernli:java-grpc-prometheus:${prometheusVersion}"
     implementation "io.prometheus:simpleclient_servlet:${prometheusClientVersion}"
 
     //
@@ -93,7 +102,7 @@ task luceneServer(type: CreateStartScripts) {
 }
 
 task luceneServerClient(type: CreateStartScripts) {
-    mainClassName = 'com.yelp.nrtsearch.server.grpc.LuceneServerClient'
+    mainClassName = 'com.yelp.nrtsearch.server.cli.LuceneClientCommand'
     applicationName = 'lucene-client'
     outputDir = new File(project.buildDir, 'tmp')
     classpath = startScripts.classpath
@@ -105,7 +114,7 @@ applicationDistribution.into('bin') {
     fileMode = 0755
 }
 
-task buildGrpcGateway(dependsOn:installDist, type: Exec) {
+task buildGrpcGateway(dependsOn: installDist, type: Exec) {
     workingDir = '.'
     commandLine = './build_grpc_gateway.sh'
 }
@@ -114,9 +123,146 @@ task buildGrpcGateway(dependsOn:installDist, type: Exec) {
 //e.g. to include perfTests: ./gradlew test -PincludePerfTests=true
 //e.g. default is to exclude perfTests: ./gradlew test
 test {
+    finalizedBy 'spotlessJavaCheck'
     if (!project.hasProperty('includePerfTests')) {
         exclude '**/YelpReviewsTest.class'
         exclude '**/YelpSuggestTest.class'
+        exclude '**/MergeBehaviorTests.class'
     }
     systemProperties System.properties
+}
+
+task javadocs(type: Javadoc) {
+    source = sourceSets.main.java.srcDirs
+}
+
+task javadocsJar(type: Jar) {
+    classifier('javadoc')
+    from javadocs.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier('sources')
+    from sourceSets.main.java.srcDirs
+}
+
+task testsJar(type: Jar) {
+    classifier('tests')
+    from sourceSets.test.output
+}
+
+signing {
+    if (project.hasProperty("signing.keyId")) {
+        sign publishing.publications
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = _artifactId
+            version = project.version
+            artifact tasks.jar
+            artifact tasks.javadocsJar
+            artifact tasks.sourcesJar
+            artifact tasks.testsJar
+            pom {
+                name = 'nrtSearch Server'
+                description = 'GRPC lucene server using near-real-time replication'
+                url = 'https://github.com/Yelp/nrtsearch'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    // Adding all developers in alphabetical order
+                    developer {
+                        id = 'alok'
+                        name = 'Alok Mysore'
+                        email = 'alok@yelp.com'
+                    }
+                    developer {
+                        id = 'erikyang'
+                        name = 'Erik Yang'
+                        email = 'erikyang@yelp.com'
+                    }
+                    developer {
+                        id = 'karthik'
+                        name = 'Karthik Alle'
+                        email = 'karthik@yelp.com'
+                    }
+                    developer {
+                        id = 'sarthakn'
+                        name = 'Sarthak Nandi'
+                        email = 'sarthakn@yelp.com'
+                    }
+                    developer {
+                        id = 'umesh'
+                        name = 'Umesh Dangat'
+                        email = 'umesh@yelp.com'
+                    }
+                }
+
+                // Links to nrtSearch github
+                scm {
+                    connection = 'scm:git:git://github.com/Yelp/nrtsearch.git'
+                    developerConnection = 'scm:git:ssh://github.com/Yelp/nrtsearch.git'
+                    url = 'https://github.com/Yelp/nrtsearch'
+                }
+            }
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each {
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', it.group)
+                    dependencyNode.appendNode('artifactId', it.name)
+                    dependencyNode.appendNode('version', it.version)
+                }
+            }
+        }
+    }
+    repositories {
+        mavenCentral {
+            if (project.hasProperty("signing.keyId")) {
+                credentials {
+                    // The credentials are picked up from your gradle.properties file
+                    username ossrhUsername
+                    password ossrhPassword
+                }
+            }
+
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+spotless {
+    java {
+        licenseHeaderFile 'license_header'
+        removeUnusedImports()
+        endWithNewline()
+        trimTrailingWhitespace()
+        googleJavaFormat()
+    }
+}
+
+// Inject properties file containing the project version into resources.
+// Used to get version info at runtime.
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
 }

@@ -2,12 +2,13 @@ plugins {
     // Provide convenience executables for trying out the examples.
     id 'application'
     // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier gradle versions
-    id 'com.google.protobuf' version '0.8.8'
+    id 'com.google.protobuf' version '0.8.12'
     // Generate IntelliJ IDEA's .idea & .iml project files
     id 'idea'
     // Publish clientlib to maven central
     id 'maven-publish'
     id 'signing'
+    id "com.diffplug.gradle.spotless"
 }
 
 repositories {
@@ -15,6 +16,7 @@ repositories {
         url "https://maven-central.storage-download.googleapis.com/repos/central/data/"
     }
     mavenLocal()
+    mavenCentral()
 }
 
 sourceCompatibility = 1.12
@@ -22,12 +24,10 @@ targetCompatibility = 1.12
 startScripts.enabled = false
 
 // groupId, artifactId and version for the generated pom
-def _groupId = 'com.yelp.nrtsearch'
 def _artifactId = 'clientlib'
-def _version = '0.1.5'
 
 // Dependency versions
-def grpcVersion = '1.26.0' // CURRENT_GRPC_VERSION
+def grpcVersion = '1.30.0' // CURRENT_GRPC_VERSION
 def protobufVersion = '3.11.1'
 def protocVersion = protobufVersion
 
@@ -67,7 +67,9 @@ protobuf {
     }
 }
 
-test {}
+test {
+    finalizedBy 'spotlessJavaCheck'
+}
 
 task javadocs(type: Javadoc) {
     source = sourceSets.main.java.srcDirs
@@ -84,15 +86,17 @@ task sourcesJar(type: Jar) {
 }
 
 signing {
-    sign publishing.publications
+    if (project.hasProperty("signing.keyId")) {
+        sign publishing.publications
+    }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = _groupId
+            groupId = project.group
             artifactId = _artifactId
-            version = _version
+            version = project.version
             artifact tasks.jar
             artifact tasks.javadocsJar
             artifact tasks.sourcesJar
@@ -137,6 +141,15 @@ publishing {
                     url = 'https://github.com/Yelp/nrtsearch'
                 }
             }
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each {
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', it.group)
+                    dependencyNode.appendNode('artifactId', it.name)
+                    dependencyNode.appendNode('version', it.version)
+                }
+            }
         }
     }
     repositories {
@@ -153,5 +166,15 @@ publishing {
             def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
+    }
+}
+
+spotless {
+    java {
+        licenseHeaderFile '../license_header'
+        removeUnusedImports()
+        endWithNewline()
+        trimTrailingWhitespace()
+        googleJavaFormat()
     }
 }

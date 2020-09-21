@@ -19,11 +19,11 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/luceneserverMetricsResponse"
+              "$ref": "#/definitions/apiHttpBody"
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -46,7 +46,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -80,7 +80,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -113,7 +113,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -146,7 +146,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -179,7 +179,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -212,7 +212,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -245,7 +245,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -266,6 +266,39 @@
         ]
       }
     },
+    "/v1/delete_by_query": {
+      "post": {
+        "summary": "Delete documents matching a query",
+        "operationId": "LuceneServer_deleteByQuery",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/luceneserverAddDocumentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/luceneserverDeleteByQueryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LuceneServer"
+        ]
+      }
+    },
     "/v1/delete_index": {
       "post": {
         "summary": "Delete index",
@@ -278,7 +311,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -299,6 +332,69 @@
         ]
       }
     },
+    "/v1/force_merge": {
+      "post": {
+        "operationId": "LuceneServer_forceMerge",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/luceneserverForceMergeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/luceneserverForceMergeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LuceneServer"
+        ]
+      }
+    },
+    "/v1/get_all_snapshot_index_gen/{indexName}": {
+      "get": {
+        "summary": "Gets all unreleased index gens of snapshots previously created with @createSnapshot.",
+        "operationId": "LuceneServer_getAllSnapshotIndexGen",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/luceneserverGetAllSnapshotGenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "indexName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "LuceneServer"
+        ]
+      }
+    },
     "/v1/indices": {
       "get": {
         "summary": "indices",
@@ -311,7 +407,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -334,7 +430,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -367,7 +463,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -400,7 +496,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -433,7 +529,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -466,7 +562,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -499,7 +595,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -532,7 +628,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -553,6 +649,70 @@
         ]
       }
     },
+    "/v1/state": {
+      "post": {
+        "summary": "Gets the state of a started index, includes settings, live_settings, search schema, suggest schema",
+        "operationId": "LuceneServer_state",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/luceneserverStateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/luceneserverStateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LuceneServer"
+        ]
+      }
+    },
+    "/v1/state/{indexName}": {
+      "get": {
+        "summary": "Gets the state of a started index, includes settings, live_settings, search schema, suggest schema",
+        "operationId": "LuceneServer_state2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/luceneserverStateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "indexName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "LuceneServer"
+        ]
+      }
+    },
     "/v1/stats": {
       "post": {
         "summary": "Retrieve index statistics",
@@ -565,7 +725,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -586,8 +746,39 @@
         ]
       }
     },
+    "/v1/stats/{indexName}": {
+      "get": {
+        "summary": "Retrieve index statistics",
+        "operationId": "LuceneServer_stats2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/luceneserverStatsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "indexName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "LuceneServer"
+        ]
+      }
+    },
     "/v1/status": {
-      "post": {
+      "get": {
         "summary": "healthcheck",
         "operationId": "LuceneServer_status",
         "responses": {
@@ -598,7 +789,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -606,12 +797,10 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/luceneserverHealthCheckRequest"
-            }
+            "name": "check",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -631,7 +820,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -664,7 +853,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -697,7 +886,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -730,7 +919,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -763,7 +952,7 @@
             }
           },
           "default": {
-            "description": "An unexpected error response",
+            "description": "An unexpected error response.",
             "schema": {
               "$ref": "#/definitions/runtimeError"
             }
@@ -794,6 +983,13 @@
           "items": {
             "type": "string"
           }
+        },
+        "faceHierarchyPaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/luceneserverFacetHierarchyPath"
+          },
+          "title": "Facet paths/hierarchy to bucket these values by, if indexed field is of type Facet.HIERARCHY"
         }
       },
       "description": "we use this wrapper object to represent each field as a multivalued field."
@@ -808,6 +1004,14 @@
       ],
       "default": "SHOULD",
       "description": "Defines how clauses may occur in matching documents. This will always be SHOULD by default."
+    },
+    "ForceMergeResponseStatus": {
+      "type": "string",
+      "enum": [
+        "FORCE_MERGE_COMPLETED",
+        "FORCE_MERGE_SUBMITTED"
+      ],
+      "default": "FORCE_MERGE_COMPLETED"
     },
     "HitCompositeFieldValue": {
       "type": "object",
@@ -827,8 +1031,7 @@
           "type": "string"
         },
         "booleanValue": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "intValue": {
           "type": "integer",
@@ -850,6 +1053,34 @@
           "$ref": "#/definitions/typeLatLng"
         }
       }
+    },
+    "ScriptParamValue": {
+      "type": "object",
+      "properties": {
+        "textValue": {
+          "type": "string"
+        },
+        "booleanValue": {
+          "type": "boolean"
+        },
+        "intValue": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "longValue": {
+          "type": "string",
+          "format": "int64"
+        },
+        "floatValue": {
+          "type": "number",
+          "format": "float"
+        },
+        "doubleValue": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "title": "script parameter entry"
     },
     "SearchResponseDiagnostics": {
       "type": "object",
@@ -1005,6 +1236,28 @@
       "default": "EQUAL_TO",
       "description": "* How the {TotalHits#value} should be interpreted.\n\n - EQUAL_TO: The total hit count is equal to {@link TotalHits#value}.\n - GREATER_THAN_OR_EQUAL_TO: The total hit count is greater than or equal to {@link TotalHits#value}."
     },
+    "apiHttpBody": {
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "type": "string",
+          "description": "The HTTP Content-Type header value specifying the content type of the body."
+        },
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "description": "The HTTP request/response body as raw binary."
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          },
+          "description": "Application specific response metadata. Must be set in the first response\nfor streaming APIs."
+        }
+      },
+      "description": "Message that represents an arbitrary HTTP body. It should only be used for\npayload formats that can't be represented as JSON, such as raw binary or\nan HTML page.\n\n\nThis message can be used both in streaming and non-streaming API methods in\nthe request as well as the response.\n\nIt can be used as a top-level request field, which is convenient if one\nwants to extract parameters from either the URL or HTTP template into the\nrequest fields and also want access to the raw HTTP body.\n\nExample:\n\n    message GetResourceRequest {\n      // A unique request id.\n      string request_id = 1;\n\n      // The raw HTTP body is bound to this field.\n      google.api.HttpBody http_body = 2;\n    }\n\n    service ResourceService {\n      rpc GetResource(GetResourceRequest) returns (google.api.HttpBody);\n      rpc UpdateResource(google.api.HttpBody) returns\n      (google.protobuf.Empty);\n    }\n\nExample with streaming methods:\n\n    service CaldavService {\n      rpc GetCalendar(stream google.api.HttpBody)\n        returns (stream google.api.HttpBody);\n      rpc UpdateCalendar(stream google.api.HttpBody)\n        returns (stream google.api.HttpBody);\n    }\n\nUse of this type only changes how the request and response bodies are\nhandled, all other features will continue to work unchanged."
+    },
     "luceneserverAddDocumentRequest": {
       "type": "object",
       "properties": {
@@ -1067,12 +1320,10 @@
           "format": "int32"
         },
         "preserveSep": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "exactFirst": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       },
       "title": "Suggester that first analyzes the surface form, adds the analyzed form to a weighted FST, and then does the same thing at lookup time (see @lucene:suggest:org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester"
@@ -1271,8 +1522,7 @@
           "type": "string"
         },
         "openSearcher": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       },
       "description": "Creates a snapshot in the index, which is saved point-in-time view of the last commit in the\nindex such that no files referenced by that snapshot will be deleted by ongoing indexing until\nthe snapshot is released with @releaseSnapshot.  Note that this will reference the last commit,\nso be sure to call commit first if you have pending changes that you'd like to be included in\nthe snapshot.\u003cp\u003eThis can be used for backup purposes, i.e. after creating the snapshot you can\ncopy all referenced files to backup storage, and then release the snapshot once complete.\nTo restore the backup, just copy all the files back and restart the server.  It can also\nbe used for transactional purposes, i.e. if you sometimes need to search a specific snapshot\ninstead of the current live index.\u003cp\u003eCreating a snapshot is very fast (does not require any\nfile copying), but over time it will consume extra disk space as old segments are merged in\nthe index.  Be sure to release the snapshot once you're done.  Snapshots survive shutdown\nand restart of the server.  Returns all protected filenames referenced by this snapshot:\nthese files will not change and will not be deleted until the snapshot is released.\nThis returns the directories and files referenced by the snapshot."
@@ -1354,6 +1604,20 @@
         }
       }
     },
+    "luceneserverDeleteByQueryRequest": {
+      "type": "object",
+      "properties": {
+        "indexName": {
+          "type": "string"
+        },
+        "query": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/luceneserverQuery"
+          }
+        }
+      }
+    },
     "luceneserverDeleteIndexRequest": {
       "type": "object",
       "properties": {
@@ -1394,6 +1658,78 @@
         }
       }
     },
+    "luceneserverFacet": {
+      "type": "object",
+      "properties": {
+        "dim": {
+          "type": "string"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "numericRange": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/luceneserverNumericRangeType"
+          }
+        },
+        "useOrdsCache": {
+          "type": "boolean"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "topN": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "luceneserverFacetHierarchyPath": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "luceneserverFacetResult": {
+      "type": "object",
+      "properties": {
+        "dim": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "value": {
+          "type": "number",
+          "format": "double"
+        },
+        "labelValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/luceneserverLabelAndValue"
+          }
+        },
+        "childCount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "luceneserverFacetType": {
       "type": "string",
       "enum": [
@@ -1416,40 +1752,31 @@
           "$ref": "#/definitions/luceneserverFieldType"
         },
         "search": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "store": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "storeDocValues": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "sort": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "tokenize": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "group": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "multiValued": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "highlight": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "omitNorms": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "dateTimeFormat": {
           "type": "string"
@@ -1463,8 +1790,8 @@
         "indexOptions": {
           "$ref": "#/definitions/luceneserverIndexOptions"
         },
-        "expression": {
-          "type": "string"
+        "script": {
+          "$ref": "#/definitions/luceneserverScript"
         },
         "analyzer": {
           "$ref": "#/definitions/luceneserverAnalyzer",
@@ -1488,6 +1815,9 @@
         },
         "facetIndexFieldName": {
           "type": "string"
+        },
+        "additionalProperties": {
+          "type": "object"
         }
       }
     },
@@ -1528,7 +1858,9 @@
         "LAT_LON",
         "DATE_TIME",
         "VIRTUAL",
-        "INTERNAL"
+        "INTERNAL",
+        "CUSTOM",
+        "_ID"
       ],
       "default": "ATOM",
       "description": "- VIRTUAL: TODO name this \"dynamic\" instead of \"virtual\"?\n - INTERNAL: TODO need tests for internal:",
@@ -1581,14 +1913,37 @@
         }
       }
     },
+    "luceneserverForceMergeRequest": {
+      "type": "object",
+      "properties": {
+        "indexName": {
+          "type": "string"
+        },
+        "maxNumSegments": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "doWait": {
+          "type": "boolean"
+        }
+      }
+    },
+    "luceneserverForceMergeResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/ForceMergeResponseStatus"
+        }
+      }
+    },
     "luceneserverFunctionScoreQuery": {
       "type": "object",
       "properties": {
         "query": {
           "$ref": "#/definitions/luceneserverQuery"
         },
-        "function": {
-          "type": "string"
+        "script": {
+          "$ref": "#/definitions/luceneserverScript"
         }
       },
       "description": "A query that wraps another query and uses custom scoring logic to compute the wrapped query's score."
@@ -1609,8 +1964,7 @@
           "format": "int32"
         },
         "transpositions": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       }
     },
@@ -1635,12 +1989,10 @@
           "format": "int32"
         },
         "preserveSep": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "exactFirst": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "minFuzzyLength": {
           "type": "integer",
@@ -1655,15 +2007,25 @@
           "format": "int32"
         },
         "transpositions": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "unicodeAware": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       },
       "title": "Implements a fuzzy AnalyzingSuggester (see @lucene:suggest:org.apache.lucene.search.suggest.analyzing.FuzzySuggester"
+    },
+    "luceneserverGetAllSnapshotGenResponse": {
+      "type": "object",
+      "properties": {
+        "indexGens": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        }
+      }
     },
     "luceneserverGetNodesResponse": {
       "type": "object",
@@ -1673,15 +2035,6 @@
           "items": {
             "$ref": "#/definitions/luceneserverNodeInfo"
           }
-        }
-      }
-    },
-    "luceneserverHealthCheckRequest": {
-      "type": "object",
-      "properties": {
-        "check": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -1751,6 +2104,18 @@
       },
       "title": "Used to be able to check if a value was set"
     },
+    "luceneserverLabelAndValue": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "luceneserverLiveSettingsRequest": {
       "type": "object",
       "properties": {
@@ -1776,6 +2141,11 @@
           "type": "number",
           "format": "double",
           "description": "Size (in MB) of IndexWriter's RAM buffer."
+        },
+        "addDocumentsMaxBufferLen": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Max number of documents to add at a time."
         }
       },
       "title": "Input to liveSettings"
@@ -1840,37 +2210,6 @@
         }
       },
       "description": "A query that analyzes the text before finding matching documents. The tokens resulting from the analysis are combined using term queries in boolean clauses."
-    },
-    "luceneserverMetricFamilySamples": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "$ref": "#/definitions/luceneserverSampleType"
-        },
-        "help": {
-          "type": "string"
-        },
-        "samples": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/luceneserverSample"
-          }
-        }
-      }
-    },
-    "luceneserverMetricsResponse": {
-      "type": "object",
-      "properties": {
-        "metricFamilySample": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/luceneserverMetricFamilySamples"
-          }
-        }
-      }
     },
     "luceneserverMode": {
       "type": "string",
@@ -1946,12 +2285,33 @@
         }
       }
     },
+    "luceneserverNumericRangeType": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "min": {
+          "type": "string",
+          "format": "int64"
+        },
+        "minInclusive": {
+          "type": "boolean"
+        },
+        "max": {
+          "type": "string",
+          "format": "int64"
+        },
+        "maxInclusive": {
+          "type": "boolean"
+        }
+      }
+    },
     "luceneserverOneHighlight": {
       "type": "object",
       "properties": {
         "isHit": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "text": {
           "type": "string"
@@ -2059,12 +2419,10 @@
       "type": "object",
       "properties": {
         "doDocScores": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "doMaxScore": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "fields": {
           "$ref": "#/definitions/luceneserverSortFields"
@@ -2145,8 +2503,7 @@
       "type": "object",
       "properties": {
         "success": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       }
     },
@@ -2161,44 +2518,22 @@
         }
       }
     },
-    "luceneserverSample": {
+    "luceneserverScript": {
       "type": "object",
       "properties": {
-        "name": {
+        "lang": {
           "type": "string"
         },
-        "labelValues": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        "source": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ScriptParamValue"
           }
-        },
-        "labelNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "value": {
-          "type": "number",
-          "format": "double"
-        },
-        "timestampMs": {
-          "type": "string",
-          "format": "int64"
         }
       }
-    },
-    "luceneserverSampleType": {
-      "type": "string",
-      "enum": [
-        "COUNTER",
-        "GAUGE",
-        "SUMMARY",
-        "HISTOGRAM",
-        "UNTYPED"
-      ],
-      "default": "COUNTER"
     },
     "luceneserverSearchRequest": {
       "type": "object",
@@ -2228,7 +2563,7 @@
         "queryText": {
           "type": "string"
         },
-        "virtualFielsd": {
+        "virtualFields": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/luceneserverVirtualField"
@@ -2254,6 +2589,12 @@
         "totalHitsThreshold": {
           "type": "integer",
           "format": "int32"
+        },
+        "facets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/luceneserverFacet"
+          }
         }
       }
     },
@@ -2264,8 +2605,7 @@
           "$ref": "#/definitions/SearchResponseDiagnostics"
         },
         "hitTimeout": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "totalHits": {
           "$ref": "#/definitions/luceneserverTotalHits"
@@ -2278,6 +2618,12 @@
         },
         "searchState": {
           "$ref": "#/definitions/SearchResponseSearchState"
+        },
+        "facetResult": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/luceneserverFacetResult"
+          }
         }
       }
     },
@@ -2299,6 +2645,10 @@
         "staleAgeSeconds": {
           "type": "number",
           "format": "double"
+        },
+        "numSegments": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -2310,8 +2660,7 @@
           "format": "int64"
         },
         "didRefresh": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       }
     },
@@ -2356,12 +2705,10 @@
           "$ref": "#/definitions/luceneserverSortFields"
         },
         "indexVerbose": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "indexMergeSchedulerAutoThrottle": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "normsFormat": {
           "type": "string"
@@ -2425,12 +2772,10 @@
         },
         "missingLat": {
           "type": "boolean",
-          "format": "boolean",
           "description": "Whether missing values should sort last instead of first.\nNote that this runs \\\"before\\\" reverse, so if you sort missing first and reverse=true then missing values will\nbe at the end."
         },
         "reverse": {
           "type": "boolean",
-          "format": "boolean",
           "title": "Sort in reverse of the field's natural order"
         }
       },
@@ -2479,6 +2824,22 @@
         "startTimeMS": {
           "type": "number",
           "format": "double"
+        }
+      }
+    },
+    "luceneserverStateRequest": {
+      "type": "object",
+      "properties": {
+        "indexName": {
+          "type": "string"
+        }
+      }
+    },
+    "luceneserverStateResponse": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "string"
         }
       }
     },
@@ -2544,8 +2905,7 @@
           "description": "Local file (to the server) to read suggestions + weights from; format is weight U+001F suggestion U+001F payload,\none per line, with suggestion UTF-8 encoded. If this option is used then searcher, suggestField,\nweightField/Expression, payloadField should not be specified."
         },
         "hasContexts": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       }
     },
@@ -2573,12 +2933,10 @@
           "type": "string"
         },
         "highlight": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "allTermsRequired": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "contexts": {
           "type": "array",
@@ -2759,8 +3117,8 @@
     "luceneserverVirtualField": {
       "type": "object",
       "properties": {
-        "expression": {
-          "type": "string"
+        "script": {
+          "$ref": "#/definitions/luceneserverScript"
         },
         "name": {
           "type": "string"
@@ -2772,13 +3130,24 @@
       "type": "object",
       "properties": {
         "type_url": {
-          "type": "string"
+          "type": "string",
+          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
         },
         "value": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "description": "Must be a valid serialized protocol buffer of the above specified type."
         }
-      }
+      },
+      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := ptypes.MarshalAny(foo)\n     ...\n     foo := \u0026pb.Foo{}\n     if err := ptypes.UnmarshalAny(any, foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.name' as the type URL and the unpack\nmethods only use the fully qualified type name after the last '/'\nin the type URL, for example \"foo.bar.com/x/y.z\" will yield type\nname \"y.z\".\n\n\nJSON\n====\nThe JSON representation of an `Any` value uses the regular\nrepresentation of the deserialized, embedded message, with an\nadditional field `@type` which contains the type URL. Example:\n\n    package google.profile;\n    message Person {\n      string first_name = 1;\n      string last_name = 2;\n    }\n\n    {\n      \"@type\": \"type.googleapis.com/google.profile.Person\",\n      \"firstName\": \u003cstring\u003e,\n      \"lastName\": \u003cstring\u003e\n    }\n\nIf the embedded message type is well-known and has a custom JSON\nrepresentation, that representation will be embedded adding a field\n`value` which holds the custom JSON in addition to the `@type`\nfield. Example (for message [google.protobuf.Duration][]):\n\n    {\n      \"@type\": \"type.googleapis.com/google.protobuf.Duration\",\n      \"value\": \"1.212s\"\n    }"
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
     },
     "runtimeError": {
       "type": "object",
@@ -2840,7 +3209,7 @@
           "description": "The longitude in degrees. It must be in the range [-180.0, +180.0]."
         }
       },
-      "description": "An object representing a latitude/longitude pair. This is expressed as a pair\nof doubles representing degrees latitude and degrees longitude. Unless\nspecified otherwise, this must conform to the\n\u003ca href=\"http://www.unoosa.org/pdf/icg/2012/template/WGS_84.pdf\"\u003eWGS84\nstandard\u003c/a\u003e. Values must be within normalized ranges.\n\nExample of normalization code in Python:\n\n    def NormalizeLongitude(longitude):\n      \"\"\"Wraps decimal degrees longitude to [-180.0, 180.0].\"\"\"\n      q, r = divmod(longitude, 360.0)\n      if r \u003e 180.0 or (r == 180.0 and q \u003c= -1.0):\n        return r - 360.0\n      return r\n\n    def NormalizeLatLng(latitude, longitude):\n      \"\"\"Wraps decimal degrees latitude and longitude to\n      [-90.0, 90.0] and [-180.0, 180.0], respectively.\"\"\"\n      r = latitude % 360.0\n      if r \u003c= 90.0:\n        return r, NormalizeLongitude(longitude)\n      elif r \u003e= 270.0:\n        return r - 360, NormalizeLongitude(longitude)\n      else:\n        return 180 - r, NormalizeLongitude(longitude + 180.0)\n\n    assert 180.0 == NormalizeLongitude(180.0)\n    assert -180.0 == NormalizeLongitude(-180.0)\n    assert -179.0 == NormalizeLongitude(181.0)\n    assert (0.0, 0.0) == NormalizeLatLng(360.0, 0.0)\n    assert (0.0, 0.0) == NormalizeLatLng(-360.0, 0.0)\n    assert (85.0, 180.0) == NormalizeLatLng(95.0, 0.0)\n    assert (-85.0, -170.0) == NormalizeLatLng(-95.0, 10.0)\n    assert (90.0, 10.0) == NormalizeLatLng(90.0, 10.0)\n    assert (-90.0, -10.0) == NormalizeLatLng(-90.0, -10.0)\n    assert (0.0, -170.0) == NormalizeLatLng(-180.0, 10.0)\n    assert (0.0, -170.0) == NormalizeLatLng(180.0, 10.0)\n    assert (-90.0, 10.0) == NormalizeLatLng(270.0, 10.0)\n    assert (90.0, 10.0) == NormalizeLatLng(-270.0, 10.0)"
+      "description": "An object representing a latitude/longitude pair. This is expressed as a pair\nof doubles representing degrees latitude and degrees longitude. Unless\nspecified otherwise, this must conform to the\n\u003ca href=\"http://www.unoosa.org/pdf/icg/2012/template/WGS_84.pdf\"\u003eWGS84\nstandard\u003c/a\u003e. Values must be within normalized ranges."
     }
   }
 }

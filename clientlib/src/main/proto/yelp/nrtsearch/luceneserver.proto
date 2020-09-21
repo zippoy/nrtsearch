@@ -4,6 +4,9 @@ syntax = "proto3";
 import "yelp/nrtsearch/search.proto";
 import "yelp/nrtsearch/analysis.proto";
 import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
 
 
 option java_multiple_files = true;
@@ -109,6 +112,9 @@ service LuceneServer {
         option (google.api.http) = {
       post: "/v1/stats"
       body: "*"
+      additional_bindings {
+        get: "/v1/stats/{indexName}"
+      }
     };
 
     }
@@ -123,6 +129,14 @@ service LuceneServer {
     rpc delete (AddDocumentRequest) returns (AddDocumentResponse) {
         option (google.api.http) = {
       post: "/v1/delete"
+      body: "*"
+    };
+
+    }
+    /* Delete documents matching a query */
+    rpc deleteByQuery (DeleteByQueryRequest) returns (AddDocumentResponse) {
+        option (google.api.http) = {
+      post: "/v1/delete_by_query"
       body: "*"
     };
 
@@ -143,14 +157,7 @@ service LuceneServer {
     };
 
     }
-    /* healthcheck */
-    rpc status (HealthCheckRequest) returns (HealthCheckResponse) {
-        option (google.api.http) = {
-      post: "/v1/status"
-      body: "*"
-    };
 
-    }
     /* Builds a new auto-suggester, loading suggestions via the provided local file path.*/
     rpc buildSuggest (BuildSuggestRequest) returns (BuildSuggestResponse) {
         option (google.api.http) = {
@@ -209,6 +216,15 @@ service LuceneServer {
     };
 
     }
+
+    /* Gets all unreleased index gens of snapshots previously created with @createSnapshot. */
+    rpc getAllSnapshotIndexGen (GetAllSnapshotGenRequest) returns (GetAllSnapshotGenResponse) {
+        option (google.api.http) = {
+      get: "/v1/get_all_snapshot_index_gen/{indexName}"
+    };
+
+    }
+
     /* backs up a resource (index) and it associated metadata e.g. settings, schema to s3 */
     rpc backupIndex (BackupIndexRequest) returns (BackupIndexResponse) {
         option (google.api.http) = {
@@ -216,13 +232,31 @@ service LuceneServer {
       body: "*"
     };
     }
+    /* Gets the state of a started index, includes settings, live_settings, search schema, suggest schema */
+    rpc state (StateRequest) returns (StateResponse) {
+        option (google.api.http) = {
+        post: "/v1/state"
+        body: "*"
+        additional_bindings {
+            get: "/v1/state/{indexName}"
+        }
+    };
+    }
+
+    //GET methods
+    /* healthcheck */
+    rpc status (HealthCheckRequest) returns (HealthCheckResponse) {
+        option (google.api.http) = {
+      get: "/v1/status"
+    };
+
+    }
     /* metrics  */
-    rpc metrics (MetricsRequest) returns (MetricsResponse) {
+    rpc metrics (google.protobuf.Empty) returns (google.api.HttpBody) {
         option (google.api.http) = {
       get: "/status/metrics"
     };
     }
-
     /* indices  */
     rpc indices (IndicesRequest) returns (IndicesResponse) {
         option (google.api.http) = {
@@ -230,7 +264,12 @@ service LuceneServer {
     };
     }
 
-
+    rpc forceMerge(ForceMergeRequest) returns (ForceMergeResponse) {
+        option (google.api.http) = {
+      post: "/v1/force_merge"
+      body: "*"
+    };
+    }
 }
 
 //The ReplicationServer service definition.
@@ -287,6 +326,8 @@ message LiveSettingsRequest {
     double maxSearcherAgeSec = 4;
     //Size (in MB) of IndexWriter's RAM buffer.
     double indexRamBufferSizeMB = 5;
+    //Max number of documents to add at a time.
+    int32 addDocumentsMaxBufferLen = 6;
 }
 
 /* Response from Server to liveSettings */
@@ -309,6 +350,8 @@ enum FieldType {
     VIRTUAL = 9; // Virtual field defined with a JavaScript expression.
     // TODO need tests for internal:
     INTERNAL = 10; //Internal field, currently only for holding indexed facets data.
+    CUSTOM = 11; // Field type specified by name.
+    _ID = 12; // Field which will be used as document IDs
 }
 
 //How the tokens should be indexed.
@@ -334,7 +377,7 @@ enum FacetType {
     FLAT = 1; //Facets are indexed with no hierarchy.
     HIERARCHY = 2; //Facets are indexed and are hierarchical.
     NUMERIC_RANGE = 3; //Compute facet counts for custom numeric ranges
-    SORTED_SET_DOC_VALUES = 4; //"Use SortedSetDocValuesFacetCounts, which must be flat but don't require a taxonomy index
+    SORTED_SET_DOC_VALUES = 4; //Uses SortedSetDocValuesFacetCounts, which must be flat but don't require a taxonomy index
 }
 
 message Field {
@@ -353,7 +396,7 @@ message Field {
     string postingsFormat = 13; // Which PostingsFormat should be used to index this field.
     string docValuesFormat = 14; // Which DocValuesFormat should be used to index this field.
     IndexOptions indexOptions = 15; //How the tokens should be indexed.
-    string expression = 16; // The JavaScript expression defining a virtual field's value (only used with type=virtual).
+    Script script = 16; // The script definition defining a virtual field's value (only used with type=virtual).
     //TODO make analyzers message types i.e. StandardAnalyzer, EnglishAnalyzer, CustomAnalyzer etc
     Analyzer analyzer = 17; // Analyzer to use for this field during indexing and searching.
     Analyzer indexAnalyzer = 18; // Analyzer to use for this field during indexing.
@@ -363,7 +406,7 @@ message Field {
     string similarity = 21; // Which Similarity implementation to use for this field.
     FacetType facet = 22; // Whether this field should index facets, and how.
     string facetIndexFieldName = 23; // "Which underlying Lucene index field is used to hold any indexed taxonomy or sorted set doc values facets
-
+    google.protobuf.Struct additionalProperties = 24; // Additional info needed to configure field, used for CUSTOM types.
 }
 
 /* Input to registerFields */
@@ -427,8 +470,14 @@ message AddDocumentRequest {
     //we use this wrapper object to represent each field as a multivalued field.
     message MultiValuedField {
         repeated string value = 1; //list of values for this field
+        //Facet paths/hierarchy to bucket these values by, if indexed field is of type Facet.HIERARCHY
+        repeated FacetHierarchyPath faceHierarchyPaths = 2;
     }
     map<string, MultiValuedField> fields = 3; //map of field name to a list of string values.
+}
+
+message FacetHierarchyPath {
+    repeated string value = 1;
 }
 
 message AddDocumentResponse {
@@ -489,6 +538,7 @@ message Searcher {
     int32 numDocs = 2; //total number of docs in this index
     string segments = 3; //string representation of segments
     double staleAgeSeconds = 4; //how much time has passed since this searcher was the current (live) searcher
+    int32 numSegments = 5; // number of segments, filled only if Searcher has StandardDirectoryReader
 }
 
 message DeleteAllDocumentsRequest {
@@ -673,6 +723,14 @@ message ReleaseSnapshotResponse {
     bool success = 1; //true if successful
 }
 
+message GetAllSnapshotGenRequest {
+    string indexName = 1; // name of index whose snapshotted index gens are needed
+}
+
+message GetAllSnapshotGenResponse {
+    repeated int64 indexGens = 1; // list of snapshotted index gens
+}
+
 message BackupIndexRequest {
     string indexName = 1; //name of the index to backup
     string serviceName = 2; // remote storage namespace qualifier for service
@@ -682,36 +740,6 @@ message BackupIndexRequest {
 message BackupIndexResponse {
     string dataVersionHash = 1; //version identifier for data on s3
     string metadataVersionHash = 2; //version identifier for metadata on s3
-}
-
-message MetricsRequest {
-}
-
-message MetricsResponse {
-    repeated MetricFamilySamples metricFamilySample = 1;
-}
-
-message MetricFamilySamples {
-    string name = 1;
-    SampleType type = 2;
-    string help = 3;
-    repeated Sample samples = 4;
-}
-
-message Sample {
-    string name = 1;
-    repeated string labelValues = 2;
-    repeated string labelNames = 3;
-    double value = 4;
-    int64 timestampMs = 5;
-}
-
-enum SampleType {
-    COUNTER = 0;
-    GAUGE = 1;
-    SUMMARY = 2;
-    HISTOGRAM = 3;
-    UNTYPED = 4;
 }
 
 message IndicesRequest {
@@ -729,6 +757,14 @@ message IndexStatsResponse {
 message RestoreIndex {
     string serviceName = 1; // remote storage namespace qualifier for service
     string resourceName = 2; //remote storage namespace qualifier for resource e.g. indexName
+}
+
+message StateRequest {
+    string indexName = 1; //index name
+}
+
+message StateResponse {
+    string response = 1; //json string of the current index state
 }
 
 message AddReplicaRequest {
@@ -850,4 +886,23 @@ message GetNodesResponse {
 message NodeInfo {
     string hostname = 1; //name or ip address of the remote host that this node is connected to for binary replication
     int32 port = 2; //port number of the remote host that this node is connected to for binary replication
+}
+
+message DeleteByQueryRequest {
+    string indexName = 1; // Index to delete documents from
+    repeated Query query = 2; // Queries to match documents to be deleted
+}
+
+message ForceMergeRequest {
+    string indexName = 1; // Index whose segments must be force merged
+    int32 maxNumSegments = 2; // Maximum number of segments after force merge
+    bool doWait = 3; // If true, waits until the force merge is completed before returning a response. Otherwise starts force merging in async and returns a response.
+}
+
+message ForceMergeResponse {
+    enum Status {
+        FORCE_MERGE_COMPLETED = 0;
+        FORCE_MERGE_SUBMITTED = 1;
+    }
+    Status status = 1;
 }

@@ -56,6 +56,14 @@
       "sort": true
     },
     {
+      "name": "long_field_multi",
+      "type": "LONG",
+      "search": true,
+      "storeDocValues": true,
+      "multiValued": true,
+      "sort": true
+    },
+    {
       "name": "double_field_multi",
       "type": "DOUBLE",
       "storeDocValues": true,
@@ -111,6 +119,14 @@
       "type": "DATE_TIME",
       "search": true,
       "storeDocValues": true,
+      "dateTimeFormat": "yyyy-MM-dd HH:mm:ss"
+    },
+    {
+      "name": "date_multi",
+      "type": "DATE_TIME",
+      "search": true,
+      "storeDocValues": true,
+      "multiValued": true,
       "dateTimeFormat": "yyyy-MM-dd HH:mm:ss"
     }
   ]
